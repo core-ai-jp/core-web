@@ -505,8 +505,8 @@ export function FounderMessage({ onAnchor }: { onAnchor: AnchorHandler }) {
         </div>
         <motion.div {...reveal} className="ch-founder-photo">
           <picture>
-            <source srcSet="/ceo-naoki-ide-mic-v4.webp" type="image/webp" />
-            <img src="/ceo-naoki-ide-mic-v4.jpg" alt={`${COMPANY_INFO.representative} / ${COMPANY_INFO.representativeEn} — Founder & CEO`} width={675} height={900} loading="lazy" decoding="async" />
+            <source srcSet="/ceo-naoki-ide-v2.webp" type="image/webp" />
+            <img src="/ceo-naoki-ide-v2.jpg" alt={`${COMPANY_INFO.representative} / ${COMPANY_INFO.representativeEn} — Founder & CEO`} width={675} height={900} loading="lazy" decoding="async" />
           </picture>
         </motion.div>
       </div>
