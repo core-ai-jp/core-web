@@ -70,6 +70,14 @@ export function HomeHero({ onAnchor }: { onAnchor: AnchorHandler }) {
   });
   const [paused, setPaused] = useState(true);
   const [muted, setMuted] = useState(true);
+  // PC gets the 16:9 cut, phones keep the original vertical film (same breakpoint as the CSS).
+  const [wide, setWide] = useState(() => window.matchMedia('(min-width: 861px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 861px)');
+    const on = () => setWide(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
 
   useEffect(() => {
     // The sticky two-row header changes height with viewport width and font loading.
@@ -92,7 +100,7 @@ export function HomeHero({ onAnchor }: { onAnchor: AnchorHandler }) {
     const onVisibility = () => { if (document.hidden) v.pause(); };
     document.addEventListener('visibilitychange', onVisibility);
     return () => { io.disconnect(); document.removeEventListener('visibilitychange', onVisibility); };
-  }, [autoPlay]);
+  }, [autoPlay, wide]);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -119,13 +127,12 @@ export function HomeHero({ onAnchor }: { onAnchor: AnchorHandler }) {
   return (
     <section id="top" className="ch-brand-hero">
       <div className="ch-brand-stage" ref={stageRef}>
-        <img src={CORE_BRAND_FILM.poster} alt="" aria-hidden className="ch-brand-ambient" width={720} height={1280} fetchPriority="high" />
-        <video ref={videoRef} className="ch-brand-video" poster={CORE_BRAND_FILM.poster}
+        <img src={wide ? CORE_BRAND_FILM.widePoster : CORE_BRAND_FILM.poster} alt="" aria-hidden className="ch-brand-ambient" width={wide ? 1920 : 720} height={wide ? 1080 : 1280} fetchPriority="high" />
+        <video key={wide ? 'wide' : 'portrait'} ref={videoRef} className="ch-brand-video" poster={wide ? CORE_BRAND_FILM.widePoster : CORE_BRAND_FILM.poster}
           autoPlay={autoPlay} muted={muted} loop playsInline preload={autoPlay ? 'auto' : 'none'}
-          width={1080} height={1920} aria-label="株式会社コアの宣伝動画"
+          width={wide ? 1920 : 1080} height={wide ? 1080 : 1920} aria-label="株式会社コアの宣伝動画"
           onPlay={() => setPaused(false)} onPause={() => setPaused(true)} onVolumeChange={e => setMuted(e.currentTarget.muted)}>
-          <source src={CORE_BRAND_FILM.mobileSrc} media="(max-width: 860px)" type="video/mp4" />
-          <source src={CORE_BRAND_FILM.src} type="video/mp4" />
+          <source src={wide ? CORE_BRAND_FILM.wideSrc : CORE_BRAND_FILM.mobileSrc} type="video/mp4" />
         </video>
         <div className="ch-brand-controls" role="group" aria-label="動画の操作">
           <button type="button" onClick={togglePlay} aria-label={paused ? '動画を再生' : '動画を一時停止'} title={paused ? '再生' : '一時停止'}>{paused ? <Play size={20} /> : <Pause size={20} />}</button>
